@@ -19,7 +19,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         startDestination = "auth"
     ) {
         composable("auth") {
-            AuthScreen(modifier)
+            AuthScreen(modifier, navController)
         }
         composable("login") {
             LoginScreen(modifier)
