@@ -19,7 +19,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             LetsBuyTheme {
-
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    AppNavigation(modifier = Modifier.padding(innerPadding))
+                }
             }
         }
     }
