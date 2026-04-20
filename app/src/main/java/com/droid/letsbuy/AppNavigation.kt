@@ -6,6 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.droid.letsbuy.screen.AuthScreen
+import com.droid.letsbuy.screen.LoginScreen
+import com.droid.letsbuy.screen.SignupScreen
 
 @Composable
 fun AppNavigation(modifier: Modifier = Modifier) {
@@ -16,8 +18,14 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         navController = navController,
         startDestination = "auth"
     ) {
-        composable("auth"){
+        composable("auth") {
             AuthScreen(modifier)
+        }
+        composable("login") {
+            LoginScreen(modifier)
+        }
+        composable("signup") {
+            SignupScreen(modifier)
         }
     }
 }
