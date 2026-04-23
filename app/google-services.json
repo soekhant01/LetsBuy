@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "800318140362",
+    "project_id": "letsbuy-6a0fe",
+    "storage_bucket": "letsbuy-6a0fe.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:800318140362:android:772a44b33b456a70b9a933",
+        "android_client_info": {
+          "package_name": "com.droid.letsbuy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpkCuhUF-fbWrEfqnCPl68SrY8zCieePY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
