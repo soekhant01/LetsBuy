@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -27,15 +28,21 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.droid.letsbuy.AppUtil
 import com.droid.letsbuy.R
+import com.droid.letsbuy.viewmodel.AuthViewModel
 
 @Composable
-fun SignupScreen(modifier: Modifier = Modifier) {
+fun SignupScreen(
+    modifier: Modifier = Modifier,
+    authViewModel: AuthViewModel = viewModel()
+) {
     var email by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-
+    val context = LocalContext.current
 
     Column(
         modifier = modifier
@@ -117,7 +124,23 @@ fun SignupScreen(modifier: Modifier = Modifier) {
 
 
         Button(
-            onClick = {}, modifier = Modifier
+            onClick = {
+                authViewModel.signup(
+                    email,
+                    name,
+                    password
+                ) { success, errorMessage ->
+                    if (success) {
+
+                    } else {
+                        AppUtil.showToast(
+                            context,
+                            errorMessage ?: "Something Went Wrong"
+                        )
+                    }
+
+                }
+            }, modifier = Modifier
                 .fillMaxWidth()
                 .height(60.dp)
         ) {
