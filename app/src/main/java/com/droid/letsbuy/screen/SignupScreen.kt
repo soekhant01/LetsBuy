@@ -159,7 +159,8 @@ fun SignupScreen(
                 }
             }, modifier = Modifier
                 .fillMaxWidth()
-                .height(60.dp)
+                .height(60.dp),
+            enabled = !isLoading
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
