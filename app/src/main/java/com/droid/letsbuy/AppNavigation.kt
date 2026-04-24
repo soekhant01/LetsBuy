@@ -9,15 +9,19 @@ import com.droid.letsbuy.screen.AuthScreen
 import com.droid.letsbuy.screen.HomeScreen
 import com.droid.letsbuy.screen.LoginScreen
 import com.droid.letsbuy.screen.SignupScreen
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 @Composable
 fun AppNavigation(modifier: Modifier = Modifier) {
 
     val navController = rememberNavController()
+    val isLoggedIn = Firebase.auth.currentUser != null
+    val firstScreen = if (isLoggedIn) "home" else "auth"
 
     NavHost(
         navController = navController,
-        startDestination = "auth"
+        startDestination = firstScreen
     ) {
         composable("auth") {
             AuthScreen(modifier, navController)
