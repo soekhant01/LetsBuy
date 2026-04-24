@@ -33,7 +33,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
             SignupScreen(modifier, navController = navController)
         }
         composable("home") {
-            HomeScreen(modifier)
+            HomeScreen(modifier, navController)
         }
     }
 }
