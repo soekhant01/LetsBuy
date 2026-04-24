@@ -1,5 +1,6 @@
 package com.droid.letsbuy.screen
 
+import android.widget.ProgressBar
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,7 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -19,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -43,6 +47,7 @@ fun SignupScreen(
     var email by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
 
@@ -127,12 +132,15 @@ fun SignupScreen(
 
         Button(
             onClick = {
+                isLoading = true
                 authViewModel.signup(
                     email,
                     name,
                     password
                 ) { success, errorMessage ->
                     if (success) {
+                        isLoading = false
+
                         AppUtil.showToast(context, "Account created!")
                         navController.navigate("home") {
                             popUpTo("auth") {
@@ -140,6 +148,8 @@ fun SignupScreen(
                             }
                         }
                     } else {
+                        isLoading = false
+
                         AppUtil.showToast(
                             context,
                             errorMessage ?: "Something Went Wrong"
@@ -151,7 +161,17 @@ fun SignupScreen(
                 .fillMaxWidth()
                 .height(60.dp)
         ) {
-            Text("Signup", fontSize = 22.sp)
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(20.dp),
+                    strokeWidth = 2.dp, color = Color.White
+                )
+            } else {
+                Text(
+                    text = "Signup",
+                    fontSize = 22.sp
+                )
+            }
         }
     }
 
