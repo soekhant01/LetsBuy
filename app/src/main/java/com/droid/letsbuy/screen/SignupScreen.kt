@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.droid.letsbuy.AppUtil
 import com.droid.letsbuy.R
 import com.droid.letsbuy.viewmodel.AuthViewModel
@@ -36,7 +37,8 @@ import com.droid.letsbuy.viewmodel.AuthViewModel
 @Composable
 fun SignupScreen(
     modifier: Modifier = Modifier,
-    authViewModel: AuthViewModel = viewModel()
+    authViewModel: AuthViewModel = viewModel(),
+    navController: NavController
 ) {
     var email by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
@@ -131,7 +133,12 @@ fun SignupScreen(
                     password
                 ) { success, errorMessage ->
                     if (success) {
-
+                        AppUtil.showToast(context, "Account created!")
+                        navController.navigate("home") {
+                            popUpTo("auth") {
+                                inclusive = true
+                            }
+                        }
                     } else {
                         AppUtil.showToast(
                             context,
