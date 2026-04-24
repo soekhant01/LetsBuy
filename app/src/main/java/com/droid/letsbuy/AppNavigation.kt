@@ -23,7 +23,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
             AuthScreen(modifier, navController)
         }
         composable("login") {
-            LoginScreen(modifier)
+            LoginScreen(modifier, navController = navController)
         }
         composable("signup") {
             SignupScreen(modifier, navController = navController)
