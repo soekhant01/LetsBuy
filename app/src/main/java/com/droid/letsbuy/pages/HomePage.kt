@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-
+import com.droid.letsbuy.components.HeaderView
 
 @Composable
 fun HomePage(modifier: Modifier = Modifier) {
@@ -21,7 +21,7 @@ fun HomePage(modifier: Modifier = Modifier) {
             .padding(horizontal = 16.dp)
             .statusBarsPadding(),
     ) {
-        Text("Home")
+        HeaderView(modifier)
 
     }
 }
