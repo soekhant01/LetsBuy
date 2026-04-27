@@ -40,8 +40,9 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         }
 
 
-        composable("category-products") {
-            CategoryProductsPage(modifier)
+        composable("category-products/{categoryId}") {
+            val categoryId = it.arguments?.getString("categoryId")
+            CategoryProductsPage(modifier, categoryId)
         }
     }
 }

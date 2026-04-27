@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CategoryProductsPage(modifier: Modifier = Modifier) {
+fun CategoryProductsPage(modifier: Modifier = Modifier, categoryId: String?) {
 
     Column(
         modifier = modifier
@@ -21,7 +21,7 @@ fun CategoryProductsPage(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Text("Products Screen")
+        Text("$categoryId Screen")
     }
 
 }
