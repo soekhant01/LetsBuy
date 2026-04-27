@@ -46,7 +46,8 @@ fun BannerView(modifier: Modifier = Modifier) {
         }
         HorizontalPager(
             state = pagerState,
-            pageSpacing = 24.dp
+            pageSpacing = 24.dp,
+            modifier = Modifier.height(200.dp)
         ) {
             AsyncImage(
                 model = bannerList[it],
