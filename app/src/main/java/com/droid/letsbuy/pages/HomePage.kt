@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.droid.letsbuy.components.BannerView
+import com.droid.letsbuy.components.CategoriesView
 import com.droid.letsbuy.components.HeaderView
 
 @Composable
@@ -25,8 +26,10 @@ fun HomePage(modifier: Modifier = Modifier) {
             .statusBarsPadding(),
     ) {
         HeaderView(modifier)
-        Spacer(Modifier.height(16.dp))
+
         BannerView(modifier)
+
+        CategoriesView(modifier)
 
     }
 }

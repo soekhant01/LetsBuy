@@ -1,5 +1,6 @@
 package com.droid.letsbuy.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 
@@ -39,7 +41,9 @@ fun BannerView(modifier: Modifier = Modifier) {
     }
 
     Column(
-        modifier = Modifier.height(250.dp)
+        modifier = Modifier
+            .height(230.dp)
+        
     ) {
         val pagerState = rememberPagerState(0) {
             bannerList.size
