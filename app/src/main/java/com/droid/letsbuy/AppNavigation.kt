@@ -2,9 +2,11 @@ package com.droid.letsbuy
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.droid.letsbuy.pages.CategoryProductsPage
 import com.droid.letsbuy.screen.AuthScreen
 import com.droid.letsbuy.screen.HomeScreen
 import com.droid.letsbuy.screen.LoginScreen
@@ -16,6 +18,7 @@ import com.google.firebase.auth.auth
 fun AppNavigation(modifier: Modifier = Modifier) {
 
     val navController = rememberNavController()
+    GlobalNavigation.navController = navController
     val isLoggedIn = Firebase.auth.currentUser != null
     val firstScreen = if (isLoggedIn) "home" else "auth"
 
@@ -35,5 +38,14 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         composable("home") {
             HomeScreen(modifier, navController)
         }
+
+
+        composable("category-products") {
+            CategoryProductsPage(modifier)
+        }
     }
+}
+
+object GlobalNavigation {
+    lateinit var navController: NavHostController
 }

@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.droid.letsbuy.GlobalNavigation
 import com.droid.letsbuy.model.CategoryModel
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
@@ -79,7 +80,9 @@ fun CategoriesView(modifier: Modifier = Modifier) {
 fun CategoryItem(category: CategoryModel) {
 
     Card(
-        onClick = {},
+        onClick = {
+            GlobalNavigation.navController.navigate("category-products")
+        },
         modifier = Modifier
             .size(120.dp),
         shape = RoundedCornerShape(16.dp),
