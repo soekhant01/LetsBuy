@@ -81,7 +81,7 @@ fun CategoryItem(category: CategoryModel) {
 
     Card(
         onClick = {
-            GlobalNavigation.navController.navigate("category-products/{${category.id}}")
+            GlobalNavigation.navController.navigate("category-products/${category.id}")
         },
         modifier = Modifier
             .size(120.dp),
