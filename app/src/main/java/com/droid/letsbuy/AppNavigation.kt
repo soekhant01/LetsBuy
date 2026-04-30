@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.droid.letsbuy.pages.CategoryProductsPage
+import com.droid.letsbuy.pages.ProductDetailsPage
 import com.droid.letsbuy.screen.AuthScreen
 import com.droid.letsbuy.screen.HomeScreen
 import com.droid.letsbuy.screen.LoginScreen
@@ -42,7 +43,12 @@ fun AppNavigation(modifier: Modifier = Modifier) {
 
         composable("category-products/{categoryId}") {
             val categoryId = it.arguments?.getString("categoryId")
-            CategoryProductsPage(modifier, categoryId)
+            CategoryProductsPage(modifier, categoryId ?: "")
+        }
+
+        composable("product-details/{productId}") {
+            val productId = it.arguments?.getString("productId")
+            ProductDetailsPage(modifier, productId ?: "")
         }
     }
 }

@@ -18,7 +18,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 
 @Composable
-fun CategoryProductsPage(modifier: Modifier = Modifier, categoryId: String?) {
+fun CategoryProductsPage(modifier: Modifier = Modifier, categoryId: String) {
 
     val productList = remember {
         mutableStateOf<List<ProductModel>>(emptyList())
