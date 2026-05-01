@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
@@ -28,12 +29,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.droid.letsbuy.AppUtil
 import com.droid.letsbuy.GlobalNavigation
 import com.droid.letsbuy.model.ProductModel
 
 @Composable
 fun ProductItemView(modifier: Modifier = Modifier, product: ProductModel) {
 
+    val context = LocalContext.current
     Card(
         onClick = {
             GlobalNavigation.navController.navigate("product-details/${product.id}")
@@ -83,7 +86,9 @@ fun ProductItemView(modifier: Modifier = Modifier, product: ProductModel) {
                     )
                 Spacer(Modifier.weight(1f))
 
-                IconButton(onClick = {}) {
+                IconButton(onClick = {
+                    AppUtil.addToCart(product.id, context)
+                }) {
                     Icon(
                         Icons.Default.ShoppingCart,
                         contentDescription = "Add to cart"

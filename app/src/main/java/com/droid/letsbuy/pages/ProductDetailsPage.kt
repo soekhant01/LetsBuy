@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -40,6 +41,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.droid.letsbuy.AppUtil
 import com.droid.letsbuy.model.ProductModel
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
@@ -52,6 +54,7 @@ fun ProductDetailsPage(modifier: Modifier = Modifier, productId: String) {
     var product by remember {
         mutableStateOf(ProductModel())
     }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         Firebase.firestore.collection("data").document("stock")
@@ -148,7 +151,9 @@ fun ProductDetailsPage(modifier: Modifier = Modifier, productId: String) {
 
 //      add to  cart button
         Button(
-            onClick = {}, modifier = Modifier
+            onClick = {
+                AppUtil.addToCart(productId, context)
+            }, modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
         ) {
