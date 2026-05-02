@@ -4,6 +4,7 @@ import android.content.Context
 import android.widget.Toast
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
 
 object AppUtil {
@@ -14,6 +15,7 @@ object AppUtil {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 
+    //    insert
     fun addToCart(productId: String, context: Context) {
 
         val userDoc = Firebase.firestore.collection("users").document(
@@ -35,6 +37,44 @@ object AppUtil {
                         showToast(context, "Item added to the cart")
                     } else {
                         showToast(context, "Failed adding item to the cart")
+
+                    }
+                }
+            }
+        }
+
+    }
+
+    //    delete
+    fun removeFromCart(
+        productId: String,
+        context: Context,
+        remove: Boolean = false
+    ) {
+
+        val userDoc = Firebase.firestore.collection("users").document(
+            FirebaseAuth.getInstance().currentUser?.uid!!
+        )
+
+        userDoc.get().addOnCompleteListener {
+            if (it.isSuccessful) {
+                val currentCart =
+                    it.result.get("cartItems") as? Map<String, Long>
+                        ?: emptyMap()
+                val currentQuantity = currentCart[productId] ?: 0
+                val updateQuantity = currentQuantity - 1
+                val updatedCart =
+                    if (updateQuantity <= 0 || remove)
+//                        if updateQuantity (greater than or equal zero) or remove = true this cart will delete
+                        mapOf("cartItems.$productId" to FieldValue.delete())
+                    else
+                        mapOf("cartItems.$productId" to updateQuantity)
+
+                userDoc.update(updatedCart).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        showToast(context, "Item Removed")
+                    } else {
+                        showToast(context, "Failed deleting item to the cart")
 
                     }
                 }

@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.droid.letsbuy.AppUtil
 import com.droid.letsbuy.GlobalNavigation
 import com.droid.letsbuy.model.ProductModel
 import com.google.firebase.Firebase
@@ -103,7 +104,9 @@ fun CartItemView(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = {
+                        AppUtil.removeFromCart(productId, context)
+                    }) {
                         Text(
                             "-",
                             fontSize = 20.sp,
@@ -113,7 +116,9 @@ fun CartItemView(
 
                     Text("$quantity", fontSize = 16.sp)
 
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = {
+                        AppUtil.addToCart(productId, context)
+                    }) {
                         Text(
                             "+",
                             fontSize = 20.sp,
@@ -126,7 +131,9 @@ fun CartItemView(
 
 
 
-            IconButton(onClick = {}) {
+            IconButton(onClick = {
+                AppUtil.removeFromCart(productId, context, true)
+            }) {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete Icon"

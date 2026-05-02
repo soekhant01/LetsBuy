@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,17 +29,21 @@ import com.google.firebase.firestore.firestore
 fun CartPage(modifier: Modifier = Modifier) {
     val userModel = remember { mutableStateOf(UserModel()) }
 
-    LaunchedEffect(Unit) {
-        Firebase.firestore.collection("users")
-            .document(FirebaseAuth.getInstance().currentUser?.uid!!).get()
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    val result = it.result.toObject(UserModel::class.java)
+//    to update automatically, like quantity when click increase or decrease
+    DisposableEffect(Unit) {
+        var listener = Firebase.firestore.collection("users")
+            .document(FirebaseAuth.getInstance().currentUser?.uid!!)
+            .addSnapshotListener { it, _ ->
+                if (it != null) {
+                    val result = it.toObject(UserModel::class.java)
                     if (result != null) {
                         userModel.value = result
                     }
                 }
             }
+        onDispose {
+            listener.remove()
+        }
     }
 
     Column(
@@ -55,7 +60,9 @@ fun CartPage(modifier: Modifier = Modifier) {
         )
 
         LazyColumn() {
-            items(userModel.value.cartItems.toList()) { (productId, quantity) ->
+            items(
+                userModel.value.cartItems.toList(),
+                key = { it.first }) { (productId, quantity) ->
                 CartItemView(productId = productId, quantity = quantity)
             }
         }
