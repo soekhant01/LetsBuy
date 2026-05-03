@@ -1,8 +1,5 @@
 package com.droid.letsbuy.screen
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -17,13 +14,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.droid.letsbuy.pages.CartPage
 import com.droid.letsbuy.pages.FavoritePage
@@ -51,7 +45,7 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
         )
     )
 
-    var selectedIndex by remember {
+    var selectedIndex by rememberSaveable {
         mutableIntStateOf(0)
     }
 
