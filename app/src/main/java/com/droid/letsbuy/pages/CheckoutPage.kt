@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.droid.letsbuy.AppUtil
+import com.droid.letsbuy.GlobalNavigation
 import com.droid.letsbuy.model.ProductModel
 import com.droid.letsbuy.model.UserModel
 import com.google.firebase.Firebase
@@ -123,7 +125,16 @@ fun CheckoutPage(modifier: Modifier = Modifier) {
 
         RowCheckout("Total", total.value)
 
+        Spacer(Modifier.height(16.dp))
 
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            onClick = {}
+        ) {
+            Text("Pay Now")
+        }
     }
 }
 
