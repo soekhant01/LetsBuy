@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.droid.letsbuy.pages.CategoryProductsPage
 import com.droid.letsbuy.pages.CheckoutPage
+import com.droid.letsbuy.pages.OrderPage
 import com.droid.letsbuy.pages.ProductDetailsPage
 import com.droid.letsbuy.screen.AuthScreen
 import com.droid.letsbuy.screen.HomeScreen
@@ -54,6 +55,9 @@ fun AppNavigation(modifier: Modifier = Modifier) {
 
         composable("checkout") {
             CheckoutPage(modifier)
+        }
+        composable("orders") {
+            OrderPage(modifier)
         }
     }
 }

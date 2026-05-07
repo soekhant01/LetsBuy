@@ -71,7 +71,7 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
             }
         }
     ) {
-        ContentScreen(modifier = modifier.padding(it), selectedIndex)
+        ContentScreen(modifier = Modifier.padding(it), selectedIndex)
     }
 
 }
@@ -83,7 +83,7 @@ fun ContentScreen(modifier: Modifier = Modifier, selectedIndex: Int) {
         0 -> HomePage(modifier)
         1 -> FavoritePage(modifier)
         2 -> CartPage(modifier)
-        3 -> ProfilePage()
+        3 -> ProfilePage(modifier)
     }
 
 }
