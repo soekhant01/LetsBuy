@@ -1,6 +1,5 @@
-package com.droid.letsbuy.pages
+package com.droid.letsbuy.components
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,7 +16,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -45,6 +43,7 @@ import com.droid.letsbuy.AppUtil
 import com.droid.letsbuy.model.ProductModel
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
+import com.tbuonomo.viewpagerdotsindicator.compose.DotsIndicator
 import com.tbuonomo.viewpagerdotsindicator.compose.model.DotGraphic
 import com.tbuonomo.viewpagerdotsindicator.compose.type.ShiftIndicatorType
 
@@ -55,6 +54,10 @@ fun ProductDetailsPage(modifier: Modifier = Modifier, productId: String) {
         mutableStateOf(ProductModel())
     }
     val context = LocalContext.current
+
+    val isFavorite = remember {
+        mutableStateOf(AppUtil.checkFavorite(context, productId))
+    }
 
     LaunchedEffect(Unit) {
         Firebase.firestore.collection("data").document("stock")
@@ -104,7 +107,7 @@ fun ProductDetailsPage(modifier: Modifier = Modifier, productId: String) {
                 )
             }
             Spacer(Modifier.height(8.dp))
-            com.tbuonomo.viewpagerdotsindicator.compose.DotsIndicator(
+            DotsIndicator(
                 dotCount = product.images.size,
                 type = ShiftIndicatorType(
                     DotGraphic(
@@ -139,9 +142,13 @@ fun ProductDetailsPage(modifier: Modifier = Modifier, productId: String) {
                 )
             Spacer(Modifier.weight(1f))
 
-            IconButton(onClick = {}) {
+            IconButton(onClick = {
+                AppUtil.addOrRemoveFromFavorite(context, productId)
+                isFavorite.value = AppUtil.checkFavorite(context, productId)
+            }) {
                 Icon(
-                    Icons.Default.FavoriteBorder,
+                    imageVector = if (isFavorite.value) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    tint = if (isFavorite.value) Color.Red else Color.Gray,
                     contentDescription = "Add to favorite"
                 )
             }

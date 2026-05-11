@@ -9,7 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import com.droid.letsbuy.pages.CategoryProductsPage
 import com.droid.letsbuy.pages.CheckoutPage
 import com.droid.letsbuy.pages.OrderPage
-import com.droid.letsbuy.pages.ProductDetailsPage
+import com.droid.letsbuy.components.ProductDetailsPage
 import com.droid.letsbuy.screen.AuthScreen
 import com.droid.letsbuy.screen.HomeScreen
 import com.droid.letsbuy.screen.LoginScreen

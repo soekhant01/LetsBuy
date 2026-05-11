@@ -2,6 +2,7 @@ package com.droid.letsbuy
 
 import android.content.Context
 import android.widget.Toast
+import androidx.core.content.edit
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
@@ -90,4 +91,36 @@ object AppUtil {
     fun getTaxPercentage(): Float {
         return 13.0f
     }
+
+    private const val PREF_NAME = "favorite_pref"
+    private const val KEY_FAVORITES = "favorite_list"
+
+    fun addOrRemoveFromFavorite(context: Context, productId: String) {
+        val list = getFavoriteList(context).toMutableSet()
+        if (list.contains(productId)) {
+            list.remove(productId)
+            showToast(context, "Item removed from Favorite")
+        } else {
+            list.add(productId)
+            showToast(context, "Item added from Favorite")
+        }
+        val prefs =
+            context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        prefs.edit {
+            putStringSet(KEY_FAVORITES, list)
+        }
+    }
+
+    fun checkFavorite(context: Context, productId: String): Boolean {
+        if (getFavoriteList(context).contains(productId)) return true;
+        return false
+    }
+
+    fun getFavoriteList(context: Context): Set<String> {
+
+        val prefs =
+            context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        return prefs.getStringSet(KEY_FAVORITES, emptySet()) ?: emptySet()
+    }
+
 }
