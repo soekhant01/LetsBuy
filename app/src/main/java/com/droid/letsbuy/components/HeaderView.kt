@@ -3,7 +3,9 @@ package com.droid.letsbuy.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -20,18 +22,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
 
 @Composable
-fun HeaderView(modifier: Modifier = Modifier) {
+fun HeaderView() {
     var name by remember { mutableStateOf("") }
     LaunchedEffect(Unit) {
         Firebase.firestore.collection("users")
             .document(FirebaseAuth.getInstance().currentUser?.uid!!).get()
-            .addOnCompleteListener() {
+            .addOnCompleteListener {
                 name = it.result.get("name").toString()
             }
     }
@@ -40,9 +43,7 @@ fun HeaderView(modifier: Modifier = Modifier) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Column(
-
-        ) {
+        Column {
             Text(
                 "Welcome Back!",
                 style = TextStyle(
@@ -51,11 +52,12 @@ fun HeaderView(modifier: Modifier = Modifier) {
                     fontWeight = FontWeight.Bold
                 )
             )
+            Spacer(Modifier.height(4.dp))
             Text(
                 name,
                 style = TextStyle(
-                    fontFamily = FontFamily.Cursive,
-                    fontSize = 18.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
             )

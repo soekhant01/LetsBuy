@@ -23,7 +23,7 @@ object AppUtil {
             FirebaseAuth.getInstance().currentUser?.uid!!
         )
 
-        userDoc.get().addOnCompleteListener {
+        userDoc.get().addOnCompleteListener { it ->
             if (it.isSuccessful) {
                 val currentCart =
                     it.result.get("cartItems") as? Map<String, Long>
@@ -57,7 +57,7 @@ object AppUtil {
             FirebaseAuth.getInstance().currentUser?.uid!!
         )
 
-        userDoc.get().addOnCompleteListener {
+        userDoc.get().addOnCompleteListener { it ->
             if (it.isSuccessful) {
                 val currentCart =
                     it.result.get("cartItems") as? Map<String, Long>
@@ -112,8 +112,7 @@ object AppUtil {
     }
 
     fun checkFavorite(context: Context, productId: String): Boolean {
-        if (getFavoriteList(context).contains(productId)) return true;
-        return false
+        return getFavoriteList(context).contains(productId)
     }
 
     fun getFavoriteList(context: Context): Set<String> {

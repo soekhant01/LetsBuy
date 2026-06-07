@@ -20,6 +20,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -64,7 +65,7 @@ fun ProductDetailsPage(modifier: Modifier = Modifier, productId: String) {
             .collection("products").document(productId).get()
             .addOnCompleteListener {
                 if (it.isSuccessful) {
-                    var result = it.result.toObject(ProductModel::class.java)
+                    val result = it.result.toObject(ProductModel::class.java)
                     if (result != null) {
                         product = result
                     }
@@ -72,142 +73,160 @@ fun ProductDetailsPage(modifier: Modifier = Modifier, productId: String) {
             }
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
-    ) {
-//        title
-        Text(
-            product.title,
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
-            modifier = Modifier.padding(8.dp)
-        )
+    Scaffold(
+        topBar = {
+            TopBar(
 
-        Spacer(Modifier.height(8.dp))
+                title = "Product Detail"
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(top = paddingValues.calculateTopPadding() - 48.dp)
+                .verticalScroll(rememberScrollState()),
+        ) {
+//        title
+            Text(
+                product.title,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+
+//            Spacer(Modifier.height(8.dp))
 //        horizontal image view
-        Column() {
-            val pagerState = rememberPagerState(0) {
-                product.images.size
-            }
-            HorizontalPager(
-                state = pagerState,
-                pageSpacing = 24.dp,
-                modifier = Modifier.height(200.dp)
-            ) {
-                AsyncImage(
-                    model = product.images[it],
-                    contentDescription = "Banner image",
-                    modifier = Modifier
-                        .height(220.dp)
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(16.dp))
+            Column {
+                val pagerState = rememberPagerState(0) {
+                    product.images.size
+                }
+                HorizontalPager(
+                    state = pagerState,
+                    pageSpacing = 24.dp,
+                    modifier = Modifier.height(200.dp)
+                ) {
+                    AsyncImage(
+                        model = product.images[it],
+                        contentDescription = "Banner image",
+                        modifier = Modifier
+                            .height(220.dp)
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(16.dp))
+                    )
+                }
+                Spacer(Modifier.height(8.dp))
+                DotsIndicator(
+                    dotCount = product.images.size,
+                    type = ShiftIndicatorType(
+                        DotGraphic(
+                            color = MaterialTheme.colorScheme.primary,
+                            size = 6.dp
+                        )
+                    ),
+                    pagerState = pagerState
                 )
             }
             Spacer(Modifier.height(8.dp))
-            DotsIndicator(
-                dotCount = product.images.size,
-                type = ShiftIndicatorType(
-                    DotGraphic(
-                        color = MaterialTheme.colorScheme.primary,
-                        size = 6.dp
-                    )
-                ),
-                pagerState = pagerState
-            )
-        }
-        Spacer(Modifier.height(8.dp))
 
 //      price and favorite button
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = "$${product.price}",
-                fontSize = 16.sp,
-                style = TextStyle(textDecoration = TextDecoration.LineThrough)
-            )
-            Spacer(Modifier.width(9.dp))
-            Text(
-                text = "$${product.actualPrice}",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold,
-
-                )
-            Spacer(Modifier.weight(1f))
-
-            IconButton(onClick = {
-                AppUtil.addOrRemoveFromFavorite(context, productId)
-                isFavorite.value = AppUtil.checkFavorite(context, productId)
-            }) {
-                Icon(
-                    imageVector = if (isFavorite.value) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                    tint = if (isFavorite.value) Color.Red else Color.Gray,
-                    contentDescription = "Add to favorite"
-                )
-            }
-        }
-        Spacer(Modifier.height(8.dp))
-
-
-//      add to  cart button
-        Button(
-            onClick = {
-                AppUtil.addToCart(productId, context)
-            }, modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-        ) {
-            Text("Add to Cart", fontSize = 16.sp)
-        }
-        Spacer(Modifier.height(16.dp))
-
-//        description
-        Text(
-            "Product Description:",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.SemiBold
-        )
-        Spacer(Modifier.height(8.dp))
-        Text(
-            product.description,
-            fontSize = 16.sp,
-            color = Color.Gray,
-            textAlign = TextAlign.Justify
-        )
-        Spacer(Modifier.height(16.dp))
-
-
-//        other details
-        if (product.otherDetails.isNotEmpty()) {
-            Text(
-                "Product Details:",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
-        Spacer(Modifier.height(8.dp))
-
-        product.otherDetails.forEach { (key, value) ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(4.dp)
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    "$key : ",
+                    text = "$${product.price}",
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
+                    style = TextStyle(textDecoration = TextDecoration.LineThrough)
                 )
-                Text(value, fontSize = 16.sp, color = Color.Gray)
-            }
-        }
+                Spacer(Modifier.width(9.dp))
+                Text(
+                    text = "$${product.actualPrice}",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.SemiBold,
 
+                    )
+                Spacer(Modifier.weight(1f))
+
+                IconButton(onClick = {
+                    AppUtil.addOrRemoveFromFavorite(context, productId)
+                    isFavorite.value = AppUtil.checkFavorite(context, productId)
+                }) {
+                    Icon(
+                        imageVector = if (isFavorite.value) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        tint = if (isFavorite.value) Color.Red else Color.Gray,
+                        contentDescription = "Add to favorite"
+                    )
+                }
+            }
+
+
+//      add to  cart button
+            Button(
+                onClick = {
+                    AppUtil.addToCart(productId, context)
+                }, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .height(50.dp)
+            ) {
+                Text("Add to Cart", fontSize = 16.sp)
+            }
+            Spacer(Modifier.height(16.dp))
+
+//        description
+            Text(
+                "Product Description:",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(horizontal = 16.dp)
+
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                product.description,
+                fontSize = 16.sp,
+                color = Color.Gray,
+                textAlign = TextAlign.Justify,
+                modifier = Modifier.padding(horizontal = 16.dp)
+
+            )
+            Spacer(Modifier.height(16.dp))
+
+
+//        other details
+            if (product.otherDetails.isNotEmpty()) {
+                Text(
+                    "Product Details: ",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                )
+                Spacer(Modifier.height(8.dp))
+
+            }
+
+            product.otherDetails.forEach { (key, value) ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 26.dp, vertical = 8.dp)
+                ) {
+                    Text(
+                        "$key : ",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+
+                        )
+                    Text(value, fontSize = 16.sp, color = Color.Gray)
+                }
+            }
+
+        }
     }
+
+
 }

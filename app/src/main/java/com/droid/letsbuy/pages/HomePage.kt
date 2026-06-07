@@ -25,11 +25,11 @@ fun HomePage(modifier: Modifier = Modifier) {
             .padding(horizontal = 16.dp)
             .statusBarsPadding(),
     ) {
-        HeaderView(modifier)
+        HeaderView()
 
-        BannerView(modifier)
+        BannerView()
 
-        CategoriesView(modifier)
+        CategoriesView()
 
     }
 }

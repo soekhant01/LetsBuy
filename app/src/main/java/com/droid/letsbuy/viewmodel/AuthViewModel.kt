@@ -21,7 +21,7 @@ class AuthViewModel : ViewModel() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener {
                 if (it.isSuccessful) {
-                    var userId = it.result.user?.uid
+                    val userId = it.result.user?.uid
                     val userModel = UserModel(name, email, userId!!)
                     fireStore.collection("users").document(userId)
                         .set(userModel).addOnCompleteListener { dbTask ->
@@ -49,7 +49,7 @@ class AuthViewModel : ViewModel() {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
             if (it.isSuccessful) {
                 onResult(true, null)
-                
+
             } else {
                 onResult(false, it.exception?.localizedMessage)
 

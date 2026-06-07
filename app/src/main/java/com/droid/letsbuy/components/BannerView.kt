@@ -1,6 +1,6 @@
 package com.droid.letsbuy.components
 
-import androidx.compose.foundation.background
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,18 +17,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
-import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 import com.tbuonomo.viewpagerdotsindicator.compose.model.DotGraphic
 import com.tbuonomo.viewpagerdotsindicator.compose.type.ShiftIndicatorType
 
 @Composable
-fun BannerView(modifier: Modifier = Modifier) {
+fun BannerView() {
     var bannerList by remember {
         mutableStateOf<List<String>>(emptyList())
     }
@@ -36,14 +33,23 @@ fun BannerView(modifier: Modifier = Modifier) {
     LaunchedEffect(Unit) {
         Firebase.firestore.collection("data").document("banners").get()
             .addOnCompleteListener {
-                bannerList = it.result.get("urls") as List<String>
+                if (it.isSuccessful && it.result != null) {
+                    val urls = it.result.get("urls") as? List<String>
+                    bannerList = urls ?: emptyList()
+                } else {
+                    Log.e(
+                        "BannerView",
+                        "Failed to load banners: ${it.exception?.message}"
+                    )
+                }
             }
     }
+    if (bannerList.isEmpty()) return
 
     Column(
         modifier = Modifier
             .height(230.dp)
-        
+
     ) {
         val pagerState = rememberPagerState(0) {
             bannerList.size

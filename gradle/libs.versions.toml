@@ -14,6 +14,8 @@ firebaseAuth = "24.0.1"
 firebaseFirestore = "26.2.0"
 coil = "2.7.0"
 tbuonomoDotsindicator = "5.1.0"
+runtime = "1.11.2"
+materialIconsExtended = "1.7.8"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -35,6 +37,8 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 tbuonomo-dotsindicator = { module = "com.tbuonomo:dotsindicator", version.ref = "tbuonomoDotsindicator" }
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtime" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -35,7 +35,7 @@ import com.google.firebase.firestore.firestore
 
 @Composable
 fun CartItemView(
-    modifier: Modifier = Modifier,
+    
     productId: String,
     quantity: Long
 ) {
