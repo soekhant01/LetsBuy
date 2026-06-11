@@ -1,4 +1,4 @@
-package com.droid.letsbuy
+package com.droid.letsbuy.utils
 
 import android.content.Context
 import android.widget.Toast

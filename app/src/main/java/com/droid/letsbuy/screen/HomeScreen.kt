@@ -23,9 +23,14 @@ import com.droid.letsbuy.pages.CartPage
 import com.droid.letsbuy.pages.FavoritePage
 import com.droid.letsbuy.pages.HomePage
 import com.droid.letsbuy.pages.ProfilePage
+import com.droid.letsbuy.viewmodel.ThemeViewModel
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    themeViewModel: ThemeViewModel
+) {
     val navItemList = listOf<NavItem>(
         NavItem(
             label = "Home",
@@ -71,19 +76,27 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
             }
         }
     ) {
-        ContentScreen(modifier = Modifier.padding(it), selectedIndex)
+        ContentScreen(
+            modifier = Modifier.padding(it),
+            selectedIndex,
+            themeViewModel
+        )
     }
 
 }
 
 @Composable
-fun ContentScreen(modifier: Modifier = Modifier, selectedIndex: Int) {
+fun ContentScreen(
+    modifier: Modifier = Modifier,
+    selectedIndex: Int,
+    themeViewModel: ThemeViewModel
+) {
 
     when (selectedIndex) {
         0 -> HomePage(modifier)
         1 -> FavoritePage(modifier)
         2 -> CartPage(modifier)
-        3 -> ProfilePage(modifier)
+        3 -> ProfilePage(modifier, themeViewModel)
     }
 
 }

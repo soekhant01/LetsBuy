@@ -26,7 +26,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.droid.letsbuy.AppUtil
+import com.droid.letsbuy.utils.AppUtil
 import com.droid.letsbuy.GlobalNavigation
 import com.droid.letsbuy.model.ProductModel
 

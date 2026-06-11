@@ -1,7 +1,9 @@
 package com.droid.letsbuy.pages
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,14 +11,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -25,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -35,16 +43,35 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.droid.letsbuy.AppUtil
+import com.droid.letsbuy.Application.prefs
+import com.droid.letsbuy.utils.AppUtil
 import com.droid.letsbuy.GlobalNavigation
 import com.droid.letsbuy.R
 import com.droid.letsbuy.model.UserModel
+import com.droid.letsbuy.viewmodel.ThemeViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
 
 @Composable
-fun ProfilePage(modifier: Modifier = Modifier) {
+fun ProfilePage(modifier: Modifier = Modifier, themeViewModel: ThemeViewModel) {
+    var switchState by remember { themeViewModel.isDarkThemeEnabled }
+    val icon: (@Composable () -> Unit) = {
+        if (switchState) {
+            Icon(
+                imageVector = Icons.Default.DarkMode,
+                contentDescription = null,
+                modifier = Modifier.size(SwitchDefaults.IconSize),
+            )
+        } else {
+            Icon(
+                imageVector = Icons.Default.LightMode,
+                contentDescription = null,
+                modifier = Modifier.size(SwitchDefaults.IconSize),
+            )
+        }
+    }
+
 
     val userModel = remember {
         mutableStateOf(UserModel())
@@ -157,8 +184,33 @@ fun ProfilePage(modifier: Modifier = Modifier) {
                 .clickable {
                     GlobalNavigation.navController.navigate("orders")
                 }
-                .padding(16.dp)
+                .padding(vertical = 8.dp)
         )
+
+        Spacer(Modifier.height(16.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                "Change Theme", fontSize = 18.sp,
+                fontWeight = FontWeight.SemiBold,
+            )
+            Switch(
+                checked = switchState,
+                onCheckedChange = {
+                    switchState = !switchState
+                    prefs.themeDark = switchState
+                },
+                thumbContent = icon,
+
+                )
+
+        }
+        Spacer(Modifier.height(16.dp))
+
 
         Button(onClick = {
             FirebaseAuth.getInstance().signOut()
@@ -174,7 +226,7 @@ fun ProfilePage(modifier: Modifier = Modifier) {
 
 }
 
-fun saveAddress(addressInput: String, context: android.content.Context) {
+fun saveAddress(addressInput: String, context: Context) {
     if (addressInput.isNotEmpty()) {
         Firebase.firestore.collection("users")
             .document(FirebaseAuth.getInstance().currentUser?.uid!!)

@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.droid.letsbuy.AppUtil
+import com.droid.letsbuy.utils.AppUtil
 import com.droid.letsbuy.GlobalNavigation
 import com.droid.letsbuy.model.ProductModel
 import com.droid.letsbuy.model.UserModel

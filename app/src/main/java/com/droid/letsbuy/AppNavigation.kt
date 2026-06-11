@@ -1,5 +1,6 @@
 package com.droid.letsbuy
 
+import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -14,11 +15,15 @@ import com.droid.letsbuy.screen.AuthScreen
 import com.droid.letsbuy.screen.HomeScreen
 import com.droid.letsbuy.screen.LoginScreen
 import com.droid.letsbuy.screen.SignupScreen
+import com.droid.letsbuy.viewmodel.ThemeViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
 @Composable
-fun AppNavigation(modifier: Modifier = Modifier) {
+fun AppNavigation(
+    modifier: Modifier = Modifier,
+    themeViewModel: ThemeViewModel
+) {
 
     val navController = rememberNavController()
     GlobalNavigation.navController = navController
@@ -39,7 +44,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
             SignupScreen(modifier, navController = navController)
         }
         composable("home") {
-            HomeScreen(modifier, navController)
+            HomeScreen(modifier, navController, themeViewModel)
         }
 
 
@@ -62,6 +67,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
     }
 }
 
+@SuppressLint("StaticFieldLeak")
 object GlobalNavigation {
     lateinit var navController: NavHostController
 }

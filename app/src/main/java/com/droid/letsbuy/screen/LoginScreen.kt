@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.droid.letsbuy.AppUtil
+import com.droid.letsbuy.utils.AppUtil
 import com.droid.letsbuy.R
 import com.droid.letsbuy.viewmodel.AuthViewModel
 

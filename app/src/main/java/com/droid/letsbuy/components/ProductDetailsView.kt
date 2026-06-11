@@ -40,7 +40,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.droid.letsbuy.AppUtil
+import com.droid.letsbuy.utils.AppUtil
 import com.droid.letsbuy.model.ProductModel
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
