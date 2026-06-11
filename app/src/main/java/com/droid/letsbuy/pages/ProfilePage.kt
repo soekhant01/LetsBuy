@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,7 +56,7 @@ import com.google.firebase.firestore.firestore
 
 @Composable
 fun ProfilePage(modifier: Modifier = Modifier, themeViewModel: ThemeViewModel) {
-    var switchState by remember { themeViewModel.isDarkThemeEnabled }
+    val switchState by themeViewModel.isDarkThemeEnabled.collectAsState()
     val icon: (@Composable () -> Unit) = {
         if (switchState) {
             Icon(
@@ -201,8 +202,8 @@ fun ProfilePage(modifier: Modifier = Modifier, themeViewModel: ThemeViewModel) {
             Switch(
                 checked = switchState,
                 onCheckedChange = {
-                    switchState = !switchState
-                    prefs.themeDark = switchState
+                    themeViewModel.setTheme(it)
+                    prefs.themeDark = it
                 },
                 thumbContent = icon,
 

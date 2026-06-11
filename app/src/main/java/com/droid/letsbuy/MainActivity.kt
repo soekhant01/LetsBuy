@@ -8,10 +8,9 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.droid.letsbuy.Application.prefs
 import com.droid.letsbuy.ui.theme.LetsBuyTheme
 import com.droid.letsbuy.viewmodel.ThemeViewModel
@@ -22,12 +21,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val themeDark = prefs.themeDark
-            themeDark.let {
-                themeViewModel.setDarkTheme(it)
+            LaunchedEffect(Unit) {
+                themeViewModel.setTheme(prefs.themeDark)
             }
 
-            LetsBuyTheme(themeViewModel.isDarkThemeEnabled.value) {
+            LetsBuyTheme(themeViewModel.isDarkThemeEnabled.collectAsState().value) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AppNavigation(
                         modifier = Modifier.padding(innerPadding),
