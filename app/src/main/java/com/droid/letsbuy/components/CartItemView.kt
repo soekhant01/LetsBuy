@@ -1,5 +1,6 @@
 package com.droid.letsbuy.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +12,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,7 +37,7 @@ import com.google.firebase.firestore.firestore
 
 @Composable
 fun CartItemView(
-    
+
     productId: String,
     quantity: Long
 ) {
@@ -60,6 +62,7 @@ fun CartItemView(
     }
 
     Card(
+
         onClick = {
             GlobalNavigation.navController.navigate("product-details/${product.id}")
         },
@@ -67,9 +70,10 @@ fun CartItemView(
             .fillMaxWidth()
             .padding(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = MaterialTheme.colorScheme.surface
         ),
-        elevation = CardDefaults.cardElevation(4.dp)
+        elevation = CardDefaults.cardElevation(4.dp),
+        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant)
 
     ) {
         Row(
