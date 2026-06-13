@@ -2,7 +2,9 @@ package com.droid.letsbuy.pages
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -46,7 +48,6 @@ fun CartPage(modifier: Modifier = Modifier) {
 
     Column(
         modifier = modifier
-//            .statusBarsPadding()
             .fillMaxSize()
             .padding(horizontal = 16.dp),
 
@@ -56,6 +57,8 @@ fun CartPage(modifier: Modifier = Modifier) {
                 fontSize = 22.sp, fontWeight = FontWeight.Bold
             )
         )
+        Spacer(Modifier.height(8.dp))
+
         if (userModel.value.cartItems.isNotEmpty()) {
             LazyColumn(
                 modifier = Modifier.weight(1f)
