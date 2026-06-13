@@ -31,8 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.droid.letsbuy.utils.AppUtil
 import com.droid.letsbuy.R
+import com.droid.letsbuy.utils.AppUtil
 import com.droid.letsbuy.viewmodel.AuthViewModel
 
 @Composable
@@ -138,8 +138,7 @@ fun SignupScreen(
                     if (success) {
                         isLoading = false
 
-                        AppUtil.showToast(context, "Account created!")
-                        navController.navigate("home") {
+                        navController.navigate("verify_email") {
                             popUpTo("auth") {
                                 inclusive = true
                             }

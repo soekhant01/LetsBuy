@@ -7,14 +7,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.droid.letsbuy.components.ProductDetailsPage
 import com.droid.letsbuy.pages.CategoryProductsPage
 import com.droid.letsbuy.pages.CheckoutPage
 import com.droid.letsbuy.pages.OrderPage
-import com.droid.letsbuy.components.ProductDetailsPage
 import com.droid.letsbuy.screen.AuthScreen
 import com.droid.letsbuy.screen.HomeScreen
 import com.droid.letsbuy.screen.LoginScreen
 import com.droid.letsbuy.screen.SignupScreen
+import com.droid.letsbuy.screen.VerifyEmailScreen
 import com.droid.letsbuy.viewmodel.ThemeViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -43,6 +44,10 @@ fun AppNavigation(
         composable("signup") {
             SignupScreen(modifier, navController = navController)
         }
+        composable("verify_email") {
+            VerifyEmailScreen(navController = navController)
+        }
+
         composable("home") {
             HomeScreen(modifier, navController, themeViewModel)
         }
