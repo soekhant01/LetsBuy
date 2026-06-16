@@ -2,10 +2,12 @@ package com.droid.letsbuy.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -16,11 +18,10 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -29,43 +30,62 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.droid.letsbuy.GlobalNavigation
 import com.droid.letsbuy.model.CategoryModel
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
+import com.droid.letsbuy.viewmodel.HomeUiState
 
 @Composable
-fun CategoriesView() {
-    val categoryList = remember {
-        mutableStateOf<List<CategoryModel>>(emptyList())
-    }
-    LaunchedEffect(Unit) {
-        Firebase.firestore.collection("data").document("stock")
-            .collection("categories").get().addOnCompleteListener {
-                if (it.isSuccessful) {
-                    val resultList = it.result.documents.mapNotNull { doc ->
-                        doc.toObject(CategoryModel::class.java)
-                    }
-                    categoryList.value = resultList
+fun CategoriesView(homeUiState: HomeUiState) {
+
+    if (homeUiState.isLoading) {
+        Column {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.3f)
+                    .clip(RoundedCornerShape(4.dp))
+                    .height(16.dp)
+                    .shimmerEffect()
+            )
+            Spacer(Modifier.height(16.dp))
+
+            LazyRow(
+                contentPadding = PaddingValues(horizontal = 20.dp),
+                horizontalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                items(5) {
+                    Card(
+                        modifier = Modifier
+                            .size(120.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .shimmerEffect(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.Transparent
+                        )
+                    ) {}
                 }
             }
-    }
-    Column {
-        Text(
-            "Categories", style = TextStyle(
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
+        }
+
+    } else {
+        Column {
+            Text(
+                "Categories", style = TextStyle(
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
             )
-        )
-        Spacer(Modifier.height(16.dp))
-//        Text(categoryList.value.toString())
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            items(categoryList.value) { item ->
-                CategoryItem(item)
+            Spacer(Modifier.height(16.dp))
+
+            LazyRow(
+                contentPadding = PaddingValues(horizontal = 20.dp),
+                horizontalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                items(homeUiState.categories) { item ->
+                    CategoryItem(item)
+
+                }
             }
         }
     }
+
 
 }
 
