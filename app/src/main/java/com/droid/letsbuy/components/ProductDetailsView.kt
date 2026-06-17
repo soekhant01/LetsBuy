@@ -40,8 +40,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.droid.letsbuy.utils.AppUtil
 import com.droid.letsbuy.model.ProductModel
+import com.droid.letsbuy.utils.AppUtil
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import com.tbuonomo.viewpagerdotsindicator.compose.DotsIndicator
@@ -84,7 +84,7 @@ fun ProductDetailsPage(modifier: Modifier = Modifier, productId: String) {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(top = paddingValues.calculateTopPadding() - 48.dp)
+                .padding(top = paddingValues.calculateTopPadding() - 16.dp)
                 .verticalScroll(rememberScrollState()),
         ) {
 //        title
@@ -95,7 +95,7 @@ fun ProductDetailsPage(modifier: Modifier = Modifier, productId: String) {
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
 
-//            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(8.dp))
 //        horizontal image view
             Column {
                 val pagerState = rememberPagerState(0) {
