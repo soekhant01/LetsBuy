@@ -18,7 +18,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.navigation.NavController
 import com.droid.letsbuy.pages.CartPage
 import com.droid.letsbuy.pages.FavoritePage
 import com.droid.letsbuy.pages.HomePage
@@ -27,11 +26,9 @@ import com.droid.letsbuy.viewmodel.ThemeViewModel
 
 @Composable
 fun HomeScreen(
-    modifier: Modifier = Modifier,
-    navController: NavController,
     themeViewModel: ThemeViewModel
 ) {
-    val navItemList = listOf<NavItem>(
+    val navItemList = listOf(
         NavItem(
             label = "Home",
             icon = Icons.Default.Home

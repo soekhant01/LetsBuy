@@ -63,36 +63,63 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.droid.letsbuy.Application.prefs
 import com.droid.letsbuy.GlobalNavigation
 import com.droid.letsbuy.R
-import com.droid.letsbuy.model.UserModel
-import com.droid.letsbuy.utils.AppUtil
+import com.droid.letsbuy.components.ProfileShimmer
+import com.droid.letsbuy.viewmodel.ProfileUiState
+import com.droid.letsbuy.viewmodel.ProfileViewModel
 import com.droid.letsbuy.viewmodel.ThemeViewModel
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.firestore
 
 @Composable
-fun ProfilePage(modifier: Modifier = Modifier, themeViewModel: ThemeViewModel) {
+fun ProfilePage(
+    modifier: Modifier = Modifier,
+    themeViewModel: ThemeViewModel,
+    profileViewModel: ProfileViewModel = viewModel()
+) {
     val switchState by themeViewModel.isDarkThemeEnabled.collectAsState()
-    val userModel = remember { mutableStateOf(UserModel()) }
-    var addressInput by remember { mutableStateOf(userModel.value.address) }
+    val profileUiState by profileViewModel.profileUiState.collectAsState()
+    var addressInput by remember { mutableStateOf("") }
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        Firebase.firestore.collection("users")
-            .document(FirebaseAuth.getInstance().currentUser?.uid!!).get()
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    val result = it.result.toObject(UserModel::class.java)
-                    if (result != null) {
-                        userModel.value = result
-                        addressInput = userModel.value.address
-                    }
-                }
-            }
+        profileViewModel.loadUser()
     }
+
+    LaunchedEffect(profileUiState.user.address) {
+        addressInput = profileUiState.user.address
+    }
+
+
+
+    when {
+        profileUiState.isLoading -> ProfileShimmer()
+        else -> ProfileContent(
+            modifier = modifier,
+            profileViewModel = profileViewModel,
+            addressInput = addressInput,
+            switchState = switchState,
+            themeViewModel = themeViewModel,
+            profileUiState = profileUiState,
+            context = context
+        )
+    }
+
+
+}
+
+@Composable
+fun ProfileContent(
+    modifier: Modifier = Modifier,
+    profileUiState: ProfileUiState,
+    profileViewModel: ProfileViewModel,
+    addressInput: String,
+    switchState: Boolean,
+    themeViewModel: ThemeViewModel,
+    context: Context
+) {
 
     Column(
         modifier = modifier
@@ -127,12 +154,12 @@ fun ProfilePage(modifier: Modifier = Modifier, themeViewModel: ThemeViewModel) {
             }
             Spacer(Modifier.height(12.dp))
             Text(
-                userModel.value.name,
+                profileUiState.user.name,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium
             )
             Text(
-                userModel.value.email,
+                profileUiState.user.email,
                 fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -162,7 +189,9 @@ fun ProfilePage(modifier: Modifier = Modifier, themeViewModel: ThemeViewModel) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         BasicTextField(
                             value = addressInput,
-                            onValueChange = { addressInput = it },
+                            onValueChange = {
+                                profileViewModel.updateAddress(it, context)
+                            },
                             modifier = Modifier.weight(1f),
                             textStyle = TextStyle(
                                 fontSize = 14.sp,
@@ -172,12 +201,20 @@ fun ProfilePage(modifier: Modifier = Modifier, themeViewModel: ThemeViewModel) {
                                 imeAction = ImeAction.Done
                             ),
                             keyboardActions = KeyboardActions(onDone = {
-                                saveAddress(addressInput, context)
+                                profileViewModel.updateAddress(
+                                    addressInput,
+                                    context
+                                )
                             })
                         )
                         Spacer(Modifier.width(8.dp))
                         IconButton(
-                            onClick = { saveAddress(addressInput, context) },
+                            onClick = {
+                                profileViewModel.updateAddress(
+                                    addressInput,
+                                    context
+                                )
+                            },
                             modifier = Modifier
                                 .size(28.dp)
                                 .border(
@@ -202,7 +239,7 @@ fun ProfilePage(modifier: Modifier = Modifier, themeViewModel: ThemeViewModel) {
 
                 // Email
                 FieldRow(icon = Icons.Default.Mail, label = "Email") {
-                    Text(userModel.value.email, fontSize = 14.sp)
+                    Text(profileUiState.user.email, fontSize = 14.sp)
                 }
 
                 HorizontalDivider(
@@ -216,7 +253,7 @@ fun ProfilePage(modifier: Modifier = Modifier, themeViewModel: ThemeViewModel) {
                     label = "Items in cart"
                 ) {
                     Text(
-                        "${userModel.value.cartItems.values.sum()} items",
+                        "${profileUiState.user.cartItems.values.sum()} items",
                         fontSize = 14.sp
                     )
                 }
@@ -326,9 +363,10 @@ fun ProfilePage(modifier: Modifier = Modifier, themeViewModel: ThemeViewModel) {
             Text("Sign out", fontSize = 14.sp, fontWeight = FontWeight.Medium)
         }
     }
+
 }
 
-// — Helpers —
+// Helpers
 
 @Composable
 private fun SectionLabel(text: String) {
@@ -387,23 +425,5 @@ private fun FieldRow(
     }
 }
 
-fun saveAddress(addressInput: String, context: Context) {
-    if (addressInput.isNotEmpty()) {
-        Firebase.firestore.collection("users")
-            .document(FirebaseAuth.getInstance().currentUser?.uid!!)
-            .update("address", addressInput)
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    AppUtil.showToast(
-                        context,
-                        "Address Updated Successfully"
-                    )
-                }
-            }
 
-    } else {
-        AppUtil.showToast(context, "Address can't be empty")
-
-    }
-}
 

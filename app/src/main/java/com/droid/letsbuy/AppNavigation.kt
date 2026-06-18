@@ -49,7 +49,7 @@ fun AppNavigation(
         }
 
         composable("home") {
-            HomeScreen(modifier, navController, themeViewModel)
+            HomeScreen(themeViewModel)
         }
 
 
