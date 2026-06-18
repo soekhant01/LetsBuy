@@ -2,50 +2,57 @@ package com.droid.letsbuy.pages
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.droid.letsbuy.components.CartItemView
-import com.droid.letsbuy.model.UserModel
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.firestore
+import com.droid.letsbuy.components.shimmerEffect
+import com.droid.letsbuy.viewmodel.CartUiState
+import com.droid.letsbuy.viewmodel.CartViewModel
 
 @Composable
-fun CartPage(modifier: Modifier = Modifier) {
-    val userModel = remember { mutableStateOf(UserModel()) }
+fun CartPage(
+    modifier: Modifier = Modifier,
+    cartViewModel: CartViewModel = viewModel()
+) {
+    val cartUiState by cartViewModel.cartUiState.collectAsState()
 
-//    to update automatically, like quantity when click increase or decrease
-    DisposableEffect(Unit) {
-        val listener = Firebase.firestore.collection("users")
-            .document(FirebaseAuth.getInstance().currentUser?.uid!!)
-            .addSnapshotListener { it, _ ->
-                if (it != null) {
-                    val result = it.toObject(UserModel::class.java)
-                    if (result != null) {
-                        userModel.value = result
-                    }
-                }
-            }
-        onDispose {
-            listener.remove()
-        }
+    LaunchedEffect(Unit) {
+        cartViewModel.startListening()
     }
 
+    when {
+        cartUiState.isLoading -> CartShimmerList(modifier = modifier)
+        else -> YourCartList(modifier = modifier, cartUiState = cartUiState)
+
+    }
+
+
+}
+
+@Composable
+fun YourCartList(modifier: Modifier = Modifier, cartUiState: CartUiState) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -59,12 +66,13 @@ fun CartPage(modifier: Modifier = Modifier) {
         )
         Spacer(Modifier.height(8.dp))
 
-        if (userModel.value.cartItems.isNotEmpty()) {
+
+        if (cartUiState.user.cartItems.isNotEmpty()) {
             LazyColumn(
                 modifier = Modifier.weight(1f)
             ) {
                 items(
-                    userModel.value.cartItems.toList(),
+                    cartUiState.user.cartItems.toList(),
                     key = { it.first }) { (productId, quantity) ->
                     CartItemView(productId = productId, quantity = quantity)
                 }
@@ -100,5 +108,34 @@ fun CartPage(modifier: Modifier = Modifier) {
 //        ) {
 //            Text("Checkout")
 //        }
+    }
+}
+
+@Composable
+fun CartShimmerList(modifier: Modifier) {
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+
+    ) {
+        items(3) {
+
+            Row {
+
+                Card(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(8.dp)
+                        .height(180.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .shimmerEffect(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.Transparent
+                    )
+                ) {}
+
+
+            }
+        }
     }
 }
