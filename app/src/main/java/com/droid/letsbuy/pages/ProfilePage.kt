@@ -64,9 +64,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.droid.letsbuy.Application.prefs
 import com.droid.letsbuy.GlobalNavigation
 import com.droid.letsbuy.R
+import com.droid.letsbuy.application.prefs
 import com.droid.letsbuy.components.ProfileShimmer
 import com.droid.letsbuy.viewmodel.ProfileUiState
 import com.droid.letsbuy.viewmodel.ProfileViewModel

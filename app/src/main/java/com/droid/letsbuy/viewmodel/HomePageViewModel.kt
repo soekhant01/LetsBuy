@@ -2,6 +2,7 @@ package com.droid.letsbuy.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.droid.letsbuy.model.BannerModel
 import com.droid.letsbuy.model.CategoryModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -46,10 +47,10 @@ class HomePageViewModel : ViewModel() {
                     .collection("data")
                     .document("banners")
                     .get()
-                    .await()
+                    .await().toObject(BannerModel::class.java)
 
-                val banners =
-                    bannerTask.get("urls") as? List<String> ?: emptyList()
+
+                val banners = bannerTask?.urls ?: emptyList()
 
 //                for categories view
                 val categoriesTask =
@@ -66,8 +67,9 @@ class HomePageViewModel : ViewModel() {
                     banners = banners,
                     categories = categories
                 )
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 _homeUiState.value = _homeUiState.value.copy(isLoading = false)
+
             }
         }
 

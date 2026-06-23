@@ -56,6 +56,7 @@ class FavoritePageViewModel : ViewModel() {
                     isLoading = false,
                     productList = emptyList()
                 )
+                AppUtil.showToast(context, "Error is : $e")
             }
 
 

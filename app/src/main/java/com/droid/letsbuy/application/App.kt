@@ -1,4 +1,4 @@
-package com.droid.letsbuy.Application
+package com.droid.letsbuy.application
 
 import android.app.Application
 import com.droid.letsbuy.utils.Prefs

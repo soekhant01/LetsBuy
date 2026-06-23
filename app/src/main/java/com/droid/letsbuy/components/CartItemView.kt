@@ -22,16 +22,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.droid.letsbuy.utils.AppUtil
 import com.droid.letsbuy.GlobalNavigation
 import com.droid.letsbuy.model.ProductModel
+import com.droid.letsbuy.utils.AppUtil
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 

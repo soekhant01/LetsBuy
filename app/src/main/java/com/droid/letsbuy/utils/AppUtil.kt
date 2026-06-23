@@ -3,6 +3,7 @@ package com.droid.letsbuy.utils
 import android.content.Context
 import android.widget.Toast
 import androidx.core.content.edit
+import com.droid.letsbuy.model.UserModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
@@ -25,9 +26,9 @@ object AppUtil {
 
         userDoc.get().addOnCompleteListener { it ->
             if (it.isSuccessful) {
-                val currentCart =
-                    it.result.get("cartItems") as? Map<String, Long>
-                        ?: emptyMap()
+                val user = it.result.toObject(UserModel::class.java)
+                val currentCart = user?.cartItems
+                    ?: emptyMap()
                 val currentQuantity = currentCart[productId] ?: 0
                 val updateQuantity = currentQuantity + 1
                 val updatedCart =
@@ -59,9 +60,9 @@ object AppUtil {
 
         userDoc.get().addOnCompleteListener { it ->
             if (it.isSuccessful) {
-                val currentCart =
-                    it.result.get("cartItems") as? Map<String, Long>
-                        ?: emptyMap()
+                val user = it.result.toObject(UserModel::class.java)
+                val currentCart = user?.cartItems
+                    ?: emptyMap()
                 val currentQuantity = currentCart[productId] ?: 0
                 val updateQuantity = currentQuantity - 1
                 val updatedCart =
