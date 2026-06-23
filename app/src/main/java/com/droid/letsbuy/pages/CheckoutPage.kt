@@ -1,5 +1,6 @@
 package com.droid.letsbuy.pages
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,88 +13,25 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.droid.letsbuy.utils.AppUtil
-import com.droid.letsbuy.GlobalNavigation
-import com.droid.letsbuy.model.ProductModel
-import com.droid.letsbuy.model.UserModel
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.firestore
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.droid.letsbuy.viewmodel.CheckOutViewModel
 
 @Composable
-fun CheckoutPage(modifier: Modifier = Modifier) {
-
-    val userModel = remember {
-        mutableStateOf(UserModel())
-    }
-
-    val productList = remember {
-        mutableListOf(ProductModel())
-    }
-
-    val subTotal = remember {
-        mutableStateOf(0f)
-    }
-
-    val total = remember {
-        mutableStateOf(0f)
-    }
-
-    val discount = remember {
-        mutableStateOf(0f)
-    }
-
-    val tax = remember {
-        mutableStateOf(0f)
-    }
-
-    fun calculateTotal() {
-        productList.forEach {
-            if (it.actualPrice.isNotEmpty()) {
-                val quantity = userModel.value.cartItems[it.id] ?: 0
-                subTotal.value += it.actualPrice.toFloat() * quantity
-
-            }
-        }
-        discount.value =
-            subTotal.value * (AppUtil.getDiscountPercentage() / 100)
-        tax.value = subTotal.value * (AppUtil.getTaxPercentage() / 100)
-        total.value = subTotal.value - discount.value + tax.value
-    }
-
-    LaunchedEffect(Unit) {
-        Firebase.firestore.collection("users")
-            .document(FirebaseAuth.getInstance().currentUser?.uid!!).get()
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    val result = it.result.toObject(UserModel::class.java)
-                    if (result != null) {
-                        userModel.value = result
-                    }
-                    Firebase.firestore.collection("data").document("stock")
-                        .collection("products")
-                        .whereIn("id", userModel.value.cartItems.keys.toList())
-                        .get().addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                val resultProducts = task.result.toObjects(
-                                    ProductModel::class.java
-                                )
-                                productList.addAll(resultProducts)
-                                calculateTotal()
-
-                            }
-
-                        }
-                }
-            }
-    }
+fun CheckoutPage(
+    modifier: Modifier = Modifier,
+    viewModel: CheckOutViewModel = viewModel()
+) {
+    val userModel by viewModel.userModel.collectAsState()
+    val subTotal by viewModel.subTotal.collectAsState()
+    val discount by viewModel.discount.collectAsState()
+    val tax by viewModel.tax.collectAsState()
+    val total by viewModel.total.collectAsState()
 
     Column(
         modifier = modifier
@@ -107,23 +45,22 @@ fun CheckoutPage(modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text("Deliver to : ", fontWeight = FontWeight.SemiBold)
-            Text(userModel.value.address)
+            Text(userModel.address)
         }
         Spacer(Modifier.height(16.dp))
 
-
         HorizontalDivider()
         Spacer(Modifier.height(16.dp))
-        RowCheckout("Subtotal", subTotal.value)
+        RowCheckout("Subtotal", subTotal)
         Spacer(Modifier.height(8.dp))
-        RowCheckout("Discount", discount.value)
+        RowCheckout("Discount", discount)
         Spacer(Modifier.height(8.dp))
-        RowCheckout("Tax", tax.value)
+        RowCheckout("Tax", tax)
         Spacer(Modifier.height(16.dp))
         HorizontalDivider()
         Spacer(Modifier.height(16.dp))
 
-        RowCheckout("Total", total.value)
+        RowCheckout("Total", total)
 
         Spacer(Modifier.height(16.dp))
 
@@ -138,6 +75,7 @@ fun CheckoutPage(modifier: Modifier = Modifier) {
     }
 }
 
+@SuppressLint("DefaultLocale")
 @Composable
 fun RowCheckout(title: String, value: Float) {
 

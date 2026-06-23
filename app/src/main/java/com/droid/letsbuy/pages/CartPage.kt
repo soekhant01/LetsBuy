@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -26,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.droid.letsbuy.GlobalNavigation
 import com.droid.letsbuy.components.CartItemView
 import com.droid.letsbuy.components.shimmerEffect
 import com.droid.letsbuy.viewmodel.CartUiState
@@ -98,16 +101,16 @@ fun YourCartList(modifier: Modifier = Modifier, cartUiState: CartUiState) {
         }
 
 
-//        Button(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .height(50.dp),
-//            onClick = {
-//                GlobalNavigation.navController.navigate("checkout")
-//            }
-//        ) {
-//            Text("Checkout")
-//        }
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            onClick = {
+                GlobalNavigation.navController.navigate("checkout")
+            }
+        ) {
+            Text("Checkout")
+        }
     }
 }
 
