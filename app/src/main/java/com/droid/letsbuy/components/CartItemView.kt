@@ -8,12 +8,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -36,7 +40,6 @@ import com.google.firebase.firestore.firestore
 
 @Composable
 fun CartItemView(
-
     productId: String,
     quantity: Long
 ) {
@@ -47,7 +50,9 @@ fun CartItemView(
         mutableStateOf(ProductModel())
     }
 
-    LaunchedEffect(Unit) {
+    val openDialog = remember { mutableStateOf(false) }
+
+    LaunchedEffect(productId) {
         Firebase.firestore.collection("data").document("stock")
             .collection("products").document(productId).get()
             .addOnCompleteListener {
@@ -135,7 +140,7 @@ fun CartItemView(
 
 
             IconButton(onClick = {
-                AppUtil.removeFromCart(productId, context, true)
+                openDialog.value = true
             }) {
                 Icon(
                     imageVector = Icons.Default.Delete,
@@ -147,5 +152,58 @@ fun CartItemView(
         }
     }
 
+    if (openDialog.value) DeleteConfirmDialog(
+        onDismissRequest = { openDialog.value = false },
+        onConfirmation = {
+            openDialog.value = false
+
+            AppUtil.removeFromCart(productId, context, true)
+        },
+        dialogText = "Are You Sure To Delete?",
+        dialogTitle = "Delete Confirmation"
+    )
+
+
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DeleteConfirmDialog(
+    onDismissRequest: () -> Unit,
+    onConfirmation: () -> Unit,
+    dialogText: String,
+    dialogTitle: String
+
+) {
+    AlertDialog(
+        title = {
+            Text(dialogTitle)
+        },
+        text = {
+            Text(dialogText)
+        },
+        onDismissRequest = {
+            onDismissRequest()
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    onConfirmation()
+                },
+
+                ) {
+                Text("Delete")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = {
+                onDismissRequest()
+
+            }) {
+                Text("Cancel")
+            }
+        }
+    )
 
 }
