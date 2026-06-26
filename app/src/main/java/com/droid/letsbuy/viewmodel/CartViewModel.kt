@@ -1,12 +1,14 @@
 package com.droid.letsbuy.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.droid.letsbuy.model.ProductModel
 import com.droid.letsbuy.model.UserModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 data class CartUiState(
@@ -18,6 +20,9 @@ class CartViewModel : ViewModel() {
 
     private val _cartUiState = MutableStateFlow(CartUiState())
     val cartUiState = _cartUiState.asStateFlow()
+
+    private val _product = MutableStateFlow(ProductModel())
+    val product: StateFlow<ProductModel> = _product.asStateFlow()
 
     private var listener: ListenerRegistration? = null
 
@@ -37,6 +42,20 @@ class CartViewModel : ViewModel() {
                 }
             }
     }
+
+    fun loadProduct(productId: String) {
+        Firebase.firestore.collection("data").document("stock")
+            .collection("products").document(productId).get()
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    val result = it.result.toObject(ProductModel::class.java)
+                    if (result != null) {
+                        _product.value = result
+                    }
+                }
+            }
+    }
+
 
     override fun onCleared() {
         super.onCleared()

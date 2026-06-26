@@ -20,10 +20,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -31,42 +31,32 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.droid.letsbuy.GlobalNavigation
-import com.droid.letsbuy.model.ProductModel
 import com.droid.letsbuy.utils.AppUtil
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
+import com.droid.letsbuy.viewmodel.CartViewModel
 
 @Composable
 fun CartItemView(
     productId: String,
-    quantity: Long
+    quantity: Long,
+    cartViewModel: CartViewModel = viewModel(key = productId)
+
 ) {
 
     val context = LocalContext.current
 
-    var product by remember {
-        mutableStateOf(ProductModel())
-    }
-
+    val product by cartViewModel.product.collectAsState()
+    
     val openDialog = remember { mutableStateOf(false) }
 
+
     LaunchedEffect(productId) {
-        Firebase.firestore.collection("data").document("stock")
-            .collection("products").document(productId).get()
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    val result = it.result.toObject(ProductModel::class.java)
-                    if (result != null) {
-                        product = result
-                    }
-                }
-            }
+        cartViewModel.loadProduct(productId)
     }
 
     Card(
-
         onClick = {
             GlobalNavigation.navController.navigate("product-details/${product.id}")
         },
@@ -78,7 +68,6 @@ fun CartItemView(
         ),
         elevation = CardDefaults.cardElevation(4.dp),
         border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant)
-
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
@@ -87,16 +76,14 @@ fun CartItemView(
             AsyncImage(
                 model = product.images.firstOrNull(),
                 contentDescription = product.category,
-                modifier = Modifier
-                    .size(100.dp)
+                modifier = Modifier.size(100.dp)
             )
 
             Column(
                 modifier = Modifier
                     .padding(8.dp)
-                    .weight(1f),
-
-                ) {
+                    .weight(1f)
+            ) {
                 Text(
                     product.title,
                     fontWeight = FontWeight.Bold,
@@ -109,9 +96,7 @@ fun CartItemView(
                     fontSize = 14.sp,
                 )
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = {
                         AppUtil.removeFromCart(productId, context)
                     }) {
@@ -134,10 +119,7 @@ fun CartItemView(
                         )
                     }
                 }
-
             }
-
-
 
             IconButton(onClick = {
                 openDialog.value = true
@@ -147,8 +129,6 @@ fun CartItemView(
                     contentDescription = "Delete Icon"
                 )
             }
-
-
         }
     }
 
