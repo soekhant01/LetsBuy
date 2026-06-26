@@ -24,10 +24,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,38 +39,31 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.droid.letsbuy.model.ProductModel
 import com.droid.letsbuy.utils.AppUtil
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.firestore
+import com.droid.letsbuy.viewmodel.CartViewModel
 import com.tbuonomo.viewpagerdotsindicator.compose.DotsIndicator
 import com.tbuonomo.viewpagerdotsindicator.compose.model.DotGraphic
 import com.tbuonomo.viewpagerdotsindicator.compose.type.ShiftIndicatorType
 
 @Composable
-fun ProductDetailsPage(modifier: Modifier = Modifier, productId: String) {
+fun ProductDetailsPage(
+    modifier: Modifier = Modifier,
+    productId: String,
+    cartViewModel: CartViewModel = viewModel(key = productId)
+) {
 
-    var product by remember {
-        mutableStateOf(ProductModel())
-    }
+    val product by cartViewModel.product.collectAsState()
+
     val context = LocalContext.current
 
     val isFavorite = remember {
         mutableStateOf(AppUtil.checkFavorite(context, productId))
     }
 
-    LaunchedEffect(Unit) {
-        Firebase.firestore.collection("data").document("stock")
-            .collection("products").document(productId).get()
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    val result = it.result.toObject(ProductModel::class.java)
-                    if (result != null) {
-                        product = result
-                    }
-                }
-            }
+    LaunchedEffect(productId) {
+        cartViewModel.loadProduct(productId)
     }
 
     Scaffold(
