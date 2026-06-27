@@ -24,6 +24,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.droid.letsbuy.components.BannerView
 import com.droid.letsbuy.components.CategoriesView
 import com.droid.letsbuy.components.HeaderView
+import com.droid.letsbuy.components.LatestItemView
 import com.droid.letsbuy.components.SearchScreen
 import com.droid.letsbuy.viewmodel.HomePageViewModel
 
@@ -57,6 +58,8 @@ fun HomePage(
             BannerView(homeUiState)
 
             CategoriesView(homeUiState)
+            Spacer(Modifier.height(16.dp))
+            LatestItemView(homeUiState)
 
         }
 

@@ -4,8 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.droid.letsbuy.model.BannerModel
 import com.droid.letsbuy.model.CategoryModel
+import com.droid.letsbuy.model.ProductModel
 import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,7 +20,8 @@ data class HomeUiState(
     val isLoading: Boolean = true,
     val userName: String = "",
     val banners: List<String> = emptyList(),
-    val categories: List<CategoryModel> = emptyList()
+    val categories: List<CategoryModel> = emptyList(),
+    val latestItems: List<ProductModel> = emptyList()
 )
 
 class HomePageViewModel : ViewModel() {
@@ -61,11 +65,25 @@ class HomePageViewModel : ViewModel() {
                     it.toObject(CategoryModel::class.java)
                 }
 
+//                for latest items
+                val now = Timestamp.now()
+                val latestTask =
+                    Firebase.firestore.collection("data").document("stock")
+                        .collection("products")
+                        .whereLessThanOrEqualTo("releaseDate", now)
+                        .orderBy("releaseDate", Query.Direction.DESCENDING)
+                        .limit(6).get().await()
+
+                val latestItems = latestTask.documents.mapNotNull { doc ->
+                    doc.toObject(ProductModel::class.java)?.copy(id = doc.id)
+                }
+
                 _homeUiState.value = HomeUiState(
                     isLoading = false,
                     userName = name,
                     banners = banners,
-                    categories = categories
+                    categories = categories,
+                    latestItems = latestItems
                 )
             } catch (_: Exception) {
                 _homeUiState.value = _homeUiState.value.copy(isLoading = false)
