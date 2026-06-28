@@ -5,7 +5,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,13 +26,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Mail
-import androidx.compose.material.icons.filled.Receipt
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -45,6 +45,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,6 +54,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -65,9 +67,12 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.droid.letsbuy.GlobalNavigation
+import com.droid.letsbuy.MyApp
 import com.droid.letsbuy.R
-import com.droid.letsbuy.application.prefs
+import com.droid.letsbuy.components.DeleteConfirmDialog
 import com.droid.letsbuy.components.ProfileShimmer
+import com.droid.letsbuy.components.ReAuthDialog
+import com.droid.letsbuy.utils.AppUtil
 import com.droid.letsbuy.viewmodel.ProfileUiState
 import com.droid.letsbuy.viewmodel.ProfileViewModel
 import com.droid.letsbuy.viewmodel.ThemeViewModel
@@ -83,6 +88,9 @@ fun ProfilePage(
     val profileUiState by profileViewModel.profileUiState.collectAsState()
     var addressInput by remember { mutableStateOf("") }
     val context = LocalContext.current
+    val openDeleteDialog = remember { mutableStateOf(false) }
+    var showReAuthDialog by remember { mutableStateOf(false) }
+
 
     LaunchedEffect(Unit) {
         profileViewModel.loadUser()
@@ -103,7 +111,10 @@ fun ProfilePage(
             switchState = switchState,
             themeViewModel = themeViewModel,
             profileUiState = profileUiState,
-            context = context
+            context = context,
+            openDeleteDialog = openDeleteDialog,
+            showReAuthDialog = showReAuthDialog,
+            onReAuthDialogChange = { showReAuthDialog = it }
         )
     }
 
@@ -118,8 +129,17 @@ fun ProfileContent(
     addressInput: String,
     switchState: Boolean,
     themeViewModel: ThemeViewModel,
-    context: Context
+    context: Context,
+    openDeleteDialog: MutableState<Boolean>,
+    showReAuthDialog: Boolean,
+    onReAuthDialogChange: (Boolean) -> Unit
 ) {
+    val navigateToAuth = {
+        GlobalNavigation.navController.navigate("auth") {
+            popUpTo(0) { inclusive = true }
+            launchSingleTop = true
+        }
+    }
 
     Column(
         modifier = modifier
@@ -128,7 +148,7 @@ fun ProfileContent(
             .padding(horizontal = 20.dp, vertical = 24.dp)
     ) {
 
-        // — Avatar + Name —
+        //   Avatar + Name  
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -167,7 +187,7 @@ fun ProfileContent(
 
         Spacer(Modifier.height(28.dp))
 
-        // — Section: Account —
+        //   Section: Account 
         SectionLabel("Account")
         Spacer(Modifier.height(8.dp))
         Card(
@@ -262,7 +282,7 @@ fun ProfileContent(
 
         Spacer(Modifier.height(24.dp))
 
-        // — Section: Preferences —
+        //   Section: Preferences  
         SectionLabel("Preferences")
         Spacer(Modifier.height(8.dp))
         Card(
@@ -275,40 +295,6 @@ fun ProfileContent(
             elevation = CardDefaults.cardElevation(0.dp)
         ) {
             Column(Modifier.padding(horizontal = 16.dp)) {
-
-                // My Orders
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { GlobalNavigation.navController.navigate("orders") }
-                        .padding(vertical = 14.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        Icon(
-                            Icons.Default.Receipt,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Text("My orders", fontSize = 14.sp)
-                    }
-                    Icon(
-                        Icons.Default.ChevronRight,
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-
-                HorizontalDivider(
-                    thickness = 0.5.dp,
-                    color = MaterialTheme.colorScheme.outlineVariant
-                )
 
                 // Dark mode toggle
                 Row(
@@ -334,7 +320,7 @@ fun ProfileContent(
                         checked = switchState,
                         onCheckedChange = {
                             themeViewModel.setTheme(it)
-                            prefs.themeDark = it
+                            MyApp.instance.prefs.themeDark = it
                         }
                     )
                 }
@@ -343,7 +329,7 @@ fun ProfileContent(
 
         Spacer(Modifier.height(24.dp))
 
-        // — Sign out —
+        //   Sign out  
         OutlinedButton(
             onClick = {
                 FirebaseAuth.getInstance().signOut()
@@ -362,6 +348,64 @@ fun ProfileContent(
             Spacer(Modifier.width(8.dp))
             Text("Sign out", fontSize = 14.sp, fontWeight = FontWeight.Medium)
         }
+        Spacer(Modifier.height(8.dp))
+
+        //   Delete Account  
+        Button(
+            onClick = { openDeleteDialog.value = true },
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+        ) {
+            Icon(
+                Icons.Default.Delete,
+                contentDescription = null,
+                modifier = Modifier.size(16.dp)
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                "Delete Account",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium
+            )
+        }
+
+        //   Dialog 1: Confirm delete  
+        if (openDeleteDialog.value) {
+            DeleteConfirmDialog(
+                onDismissRequest = { openDeleteDialog.value = false },
+                onConfirmation = {
+                    openDeleteDialog.value = false
+                    profileViewModel.deleteAccount(
+                        onSuccess = navigateToAuth,
+                        onReAuthRequired = {
+                            onReAuthDialogChange(true)
+                        },
+                        onError = { msg ->
+                            AppUtil.showToast(context, msg)
+                        }
+                    )
+                },
+                dialogText = "Are You Sure To Delete Your Account?",
+                dialogTitle = "Delete Confirmation"
+            )
+        }
+        //   Dialog 2: Re-auth password (only if needed)  
+        if (showReAuthDialog) {
+            ReAuthDialog(
+                onDismiss = { onReAuthDialogChange(false) },
+                onConfirm = { password ->
+                    onReAuthDialogChange(false)
+                    profileViewModel.reAuthAndDeleteAccount(
+                        password = password,
+                        onSuccess = navigateToAuth,
+                        onError = { msg ->
+                            AppUtil.showToast(context, msg)
+                        }
+                    )
+                }
+            )
+        }
+
     }
 
 }

@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import com.droid.letsbuy.model.UserModel
 import com.droid.letsbuy.utils.AppUtil
 import com.google.firebase.Firebase
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -54,6 +56,66 @@ class ProfileViewModel : ViewModel() {
             }
             .addOnFailureListener { e ->
                 AppUtil.showToast(context, "Failed: ${e.message}")
+            }
+    }
+
+    fun deleteAccount(
+        onReAuthRequired: () -> Unit,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit,
+
+        ) {
+        val user =
+            FirebaseAuth.getInstance().currentUser
+                ?: return onError("No User Logged In")
+
+        user.delete().addOnSuccessListener {
+            Firebase.firestore.collection("users").document(user.uid).delete()
+                .addOnSuccessListener {
+                    onSuccess()
+                }
+                .addOnFailureListener { e ->
+                    onError(e.message ?: "Failed to delete user data")
+                }
+
+        }
+            .addOnFailureListener { e ->
+                if (e is FirebaseAuthRecentLoginRequiredException) {
+                    onReAuthRequired()
+                } else {
+                    onError(e.message ?: "Failed to delete account")
+                }
+            }
+
+
+    }
+
+    fun reAuthAndDeleteAccount(
+        password: String,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit,
+    ) {
+        val user =
+            FirebaseAuth.getInstance().currentUser
+                ?: return onError("No User Logged In")
+        val userCredential =
+            EmailAuthProvider.getCredential(user.email!!, password)
+
+        user.reauthenticate(userCredential).addOnSuccessListener {
+            Firebase.firestore.collection("users").document(user.uid).delete()
+                .addOnSuccessListener {
+                    user.delete()
+                        .addOnSuccessListener { onSuccess() }
+                        .addOnFailureListener { e ->
+                            onError(e.message ?: "Failed to delete account")
+                        }
+                }
+                .addOnFailureListener { e ->
+                    onError(e.message ?: "Failed to delete user data")
+                }
+        }
+            .addOnFailureListener {
+                onError("Wrong password. Please try again.")
             }
     }
 }

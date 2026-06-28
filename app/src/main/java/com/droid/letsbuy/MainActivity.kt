@@ -11,7 +11,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import com.droid.letsbuy.application.prefs
 import com.droid.letsbuy.ui.theme.LetsBuyTheme
 import com.droid.letsbuy.viewmodel.ThemeViewModel
 
@@ -22,7 +21,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             LaunchedEffect(Unit) {
-                themeViewModel.setTheme(prefs.themeDark)
+                themeViewModel.setTheme(MyApp.instance.prefs.themeDark)
             }
 
             LetsBuyTheme(themeViewModel.isDarkThemeEnabled.collectAsState().value) {

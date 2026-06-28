@@ -1,24 +1,21 @@
-package com.droid.letsbuy.application
+package com.droid.letsbuy
 
 import android.app.Application
 import com.droid.letsbuy.utils.Prefs
 
+class MyApp : Application() {
 
-val prefs: Prefs by lazy {
-    App.prefs!!
-}
+    lateinit var prefs: Prefs
+        private set
 
-class App : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
         prefs = Prefs(applicationContext)
     }
 
-    companion object {
-        var prefs: Prefs? = null
-        lateinit var instance: App
+    companion object Companion {
+        lateinit var instance: MyApp
             private set
-
     }
 }
