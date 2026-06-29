@@ -90,7 +90,7 @@ fun ContentScreen(
 ) {
 
     when (selectedIndex) {
-        0 -> HomePage()
+        0 -> HomePage(modifier = modifier)
         1 -> FavoritePage(modifier)
         2 -> CartPage(modifier)
         3 -> ProfilePage(modifier, themeViewModel)

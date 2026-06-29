@@ -18,6 +18,7 @@ import com.droid.letsbuy.screen.SignupScreen
 import com.droid.letsbuy.screen.VerifyEmailScreen
 import com.droid.letsbuy.viewmodel.ThemeViewModel
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 
 @Composable
@@ -28,8 +29,25 @@ fun AppNavigation(
 
     val navController = rememberNavController()
     GlobalNavigation.navController = navController
-    val isLoggedIn = Firebase.auth.currentUser != null
-    val firstScreen = if (isLoggedIn) "home" else "auth"
+    val currentUser = FirebaseAuth.getInstance().currentUser
+
+    val firstScreen =
+        if (Firebase.auth.currentUser != null) {
+            if (currentUser?.isEmailVerified == true) {
+                // fully verified → go home
+                "home"
+            } else {
+                // signed in but NOT verified → delete and go to auth
+                currentUser?.delete()?.addOnCompleteListener {
+                    FirebaseAuth.getInstance().signOut()
+                }
+                "auth"
+            }
+
+        } else {
+            FirebaseAuth.getInstance().signOut()
+            "auth"
+        }
 
     NavHost(
         navController = navController,

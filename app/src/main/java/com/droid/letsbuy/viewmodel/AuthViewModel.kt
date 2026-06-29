@@ -37,6 +37,7 @@ class AuthViewModel : ViewModel() {
                                             )
 
                                         } else {
+                                            user.delete()
                                             onResult(
                                                 false, "Something Went Wrong"
                                             )
@@ -46,6 +47,7 @@ class AuthViewModel : ViewModel() {
                                     }
 
                             } else {
+                                user.delete()
                                 onResult(
                                     false, "Failed to send verification email"
                                 )
@@ -57,6 +59,7 @@ class AuthViewModel : ViewModel() {
                 }
             }
     }
+
 
     fun login(
         email: String, password: String, onResult: (Boolean, String?) -> Unit

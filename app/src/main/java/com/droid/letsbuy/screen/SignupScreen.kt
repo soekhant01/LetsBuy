@@ -129,6 +129,26 @@ fun SignupScreen(
 
         Button(
             onClick = {
+                if (name.isBlank() || password.isBlank() || password.isBlank()) {
+                    AppUtil.showToast(context, "Please fill in all fields")
+                    return@Button
+                }
+                if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email)
+                        .matches() || email.any { it.isUpperCase() }
+                ) {
+                    AppUtil.showToast(
+                        context,
+                        "Please enter a valid email address"
+                    )
+                    return@Button
+                }
+                if (password.length < 6) {
+                    AppUtil.showToast(
+                        context,
+                        "Password must be at least 6 characters"
+                    )
+                    return@Button
+                }
                 isLoading = true
                 authViewModel.signup(
                     email,

@@ -86,19 +86,16 @@ fun ProfilePage(
 ) {
     val switchState by themeViewModel.isDarkThemeEnabled.collectAsState()
     val profileUiState by profileViewModel.profileUiState.collectAsState()
-    var addressInput by remember { mutableStateOf("") }
+
     val context = LocalContext.current
     val openDeleteDialog = remember { mutableStateOf(false) }
-    var showReAuthDialog by remember { mutableStateOf(false) }
 
 
     LaunchedEffect(Unit) {
         profileViewModel.loadUser()
     }
 
-    LaunchedEffect(profileUiState.user.address) {
-        addressInput = profileUiState.user.address
-    }
+
 
 
 
@@ -107,15 +104,13 @@ fun ProfilePage(
         else -> ProfileContent(
             modifier = modifier,
             profileViewModel = profileViewModel,
-            addressInput = addressInput,
             switchState = switchState,
             themeViewModel = themeViewModel,
             profileUiState = profileUiState,
             context = context,
             openDeleteDialog = openDeleteDialog,
-            showReAuthDialog = showReAuthDialog,
-            onReAuthDialogChange = { showReAuthDialog = it }
-        )
+
+            )
     }
 
 
@@ -126,14 +121,18 @@ fun ProfileContent(
     modifier: Modifier = Modifier,
     profileUiState: ProfileUiState,
     profileViewModel: ProfileViewModel,
-    addressInput: String,
+
+
     switchState: Boolean,
     themeViewModel: ThemeViewModel,
     context: Context,
     openDeleteDialog: MutableState<Boolean>,
-    showReAuthDialog: Boolean,
-    onReAuthDialogChange: (Boolean) -> Unit
-) {
+
+    ) {
+    var addressInput by remember(profileUiState.user.address) {
+        mutableStateOf(profileUiState.user.address)
+    }
+    var showReAuthDialog by remember { mutableStateOf(false) }
     val navigateToAuth = {
         GlobalNavigation.navController.navigate("auth") {
             popUpTo(0) { inclusive = true }
@@ -210,7 +209,7 @@ fun ProfileContent(
                         BasicTextField(
                             value = addressInput,
                             onValueChange = {
-                                profileViewModel.updateAddress(it, context)
+                                addressInput = it
                             },
                             modifier = Modifier.weight(1f),
                             textStyle = TextStyle(
@@ -225,7 +224,8 @@ fun ProfileContent(
                                     addressInput,
                                     context
                                 )
-                            })
+                            }
+                            )
                         )
                         Spacer(Modifier.width(8.dp))
                         IconButton(
@@ -378,7 +378,7 @@ fun ProfileContent(
                     profileViewModel.deleteAccount(
                         onSuccess = navigateToAuth,
                         onReAuthRequired = {
-                            onReAuthDialogChange(true)
+                            showReAuthDialog = true
                         },
                         onError = { msg ->
                             AppUtil.showToast(context, msg)
@@ -392,9 +392,12 @@ fun ProfileContent(
         //   Dialog 2: Re-auth password (only if needed)  
         if (showReAuthDialog) {
             ReAuthDialog(
-                onDismiss = { onReAuthDialogChange(false) },
+                onDismiss = {
+                    showReAuthDialog = false
+                },
                 onConfirm = { password ->
-                    onReAuthDialogChange(false)
+                    showReAuthDialog = false
+
                     profileViewModel.reAuthAndDeleteAccount(
                         password = password,
                         onSuccess = navigateToAuth,
