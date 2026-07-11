@@ -50,7 +50,7 @@ fun HomePage(
 
             HeaderView(
                 homeUiState = homeUiState,
-                onSearchClick = { isSearchActive = true }
+//                onSearchClick = { isSearchActive = true }
             )
 
 
